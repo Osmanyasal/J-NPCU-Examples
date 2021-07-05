@@ -10,11 +10,11 @@ import philosophers.arge.actor.ActorCluster;
 import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
 import philosophers.arge.actor.ClusterConfig;
-import philosophers.arge.actor.NumberBasedDivison;
+import philosophers.arge.actor.divisionstrategies.NumberBasedDivison;
 
 public class WordCountExmpl extends Example {
 
-	private final int LIMIT = 50_000_000;
+	private final int LIMIT = 10_000_000;
 
 	private List<String> namePool;
 	private Faker faker;
@@ -52,10 +52,10 @@ public class WordCountExmpl extends Example {
 		// send message
 		int range = LIMIT / 100;
 		for (int i = 0; i < LIMIT; i += range)
-			counterNode.sendByLocking(new ActorMessage<List<String>>().setMessage(namePool.subList(i, i + range)));
+			counterNode.sendByLocking(new ActorMessage<List<String>>(namePool.subList(i, i + range)));
 
 		// wait duringe execution
-		cluster.waitForTermination();
+		cluster.waitForTermination(false);
 
 		// collect result
 		CounterNode temp = counterNode;
@@ -65,9 +65,7 @@ public class WordCountExmpl extends Example {
 			temp = (CounterNode) temp.getChildActor();
 		}
 		System.out.println("parallel res : " + result);
-
 		// disable cluster
-		cluster.getPool().shutdown();
 	}
 
 	@Override

@@ -9,7 +9,10 @@ import main.Example;
 import philosophers.arge.actor.ActorCluster;
 import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.ActorPriority;
 import philosophers.arge.actor.ClusterConfig;
+import philosophers.arge.actor.ExecutorFactory.ThreadPoolTypes;
+import philosophers.arge.actor.Topic;
 import philosophers.arge.actor.divisionstrategies.NumberBasedDivison;
 
 public class WordCountExmpl extends Example {
@@ -31,12 +34,12 @@ public class WordCountExmpl extends Example {
 	private void init() {
 		namePool = new ArrayList<>();
 		faker = new Faker();
-		cluster = new ActorCluster(new ClusterConfig());
+		cluster = new ActorCluster(new ClusterConfig(ThreadPoolTypes.PRIORITIZED));
 	}
 
 	private void initNodes() {
-		ActorConfig<List<String>> config = new ActorConfig<>("nodeCounter", cluster.getRouter(),
-				new NumberBasedDivison<List<String>>(5l));
+		ActorConfig<List<String>> config = new ActorConfig<>(new Topic("nodeCounter"), cluster.getRouter(),
+				new NumberBasedDivison<List<String>>(5l), ActorPriority.DEFAULT);
 		this.counterNode = new CounterNode(config, lookingFor);
 		cluster.addRootActor(counterNode);
 	}

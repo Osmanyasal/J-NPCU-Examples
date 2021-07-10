@@ -7,6 +7,7 @@ import philosophers.arge.actor.ActorMessage;
 public class Serve extends Actor<Image> {
 	private ActorConfig<Image> config;
 	private int delay;
+	private static Integer count = 0;
 
 	protected Serve(ActorConfig<Image> config, int delay) {
 		super(config);
@@ -21,8 +22,15 @@ public class Serve extends Actor<Image> {
 
 	private void deliver(Image message) {
 		delay(delay);
-		// System.out.println(String.format("[Deliver] : image (%s) delivered",
-		// message.getId().substring(0, 10)));
+		System.out.println(
+				String.format("%s - delivering image [%s]", IncrementAndGetCount(), message.getId().subSequence(0, 6)));
+	}
+
+	private static final int IncrementAndGetCount() {
+		synchronized (count) {
+			count += 1;
+		}
+		return count;
 	}
 
 	@Override

@@ -37,7 +37,6 @@ public class Reshape extends Actor<Image> {
 	}
 
 	private Image reshapeImage(Image message) {
-		//System.out.println(String.format("[Reshape] : reshaping image (%s)", message.getId().substring(0, 10)));
 		delay(delay);
 		return message;
 	}

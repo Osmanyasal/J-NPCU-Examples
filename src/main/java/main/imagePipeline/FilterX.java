@@ -37,8 +37,6 @@ public class FilterX extends Actor<Image> {
 	}
 
 	private Image filterImage(Image message) {
-		// System.out.println(String.format("[filterX] : filtering image (%s)",
-		// message.getId().substring(0, 10)));
 		delay(delay);
 		return message;
 	}

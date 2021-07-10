@@ -1,7 +1,6 @@
 package main;
 
 import main.imagePipeline.ImageProcessing;
-import main.wordCount.WordCountExmpl;
 
 /**
  * Hello world!

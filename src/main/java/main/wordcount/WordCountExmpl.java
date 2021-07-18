@@ -1,4 +1,4 @@
-package main.wordCount;
+package main.wordcount;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,11 @@ import com.github.javafaker.Faker;
 
 import main.Example;
 import philosophers.arge.actor.ActorCluster;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
 import philosophers.arge.actor.ActorPriority;
-import philosophers.arge.actor.ClusterConfig;
 import philosophers.arge.actor.ExecutorFactory.ThreadPoolTypes;
+import philosophers.arge.actor.configs.ActorConfig;
+import philosophers.arge.actor.configs.ClusterConfig;
 import philosophers.arge.actor.Topic;
 import philosophers.arge.actor.divisionstrategies.NumberBasedDivison;
 
@@ -34,12 +34,12 @@ public class WordCountExmpl extends Example {
 	private void init() {
 		namePool = new ArrayList<>();
 		faker = new Faker();
-		cluster = new ActorCluster(new ClusterConfig(ThreadPoolTypes.PRIORITIZED));
+		cluster = new ActorCluster(new ClusterConfig(ThreadPoolTypes.PRIORITIZED, false));
 	}
 
 	private void initNodes() {
 		ActorConfig<List<String>> config = new ActorConfig<>(new Topic("nodeCounter"), cluster.getRouter(),
-				new NumberBasedDivison<List<String>>(5l), ActorPriority.DEFAULT);
+				new NumberBasedDivison<List<String>>(5l), ActorPriority.DEFAULT, null);
 		this.counterNode = new CounterNode(config, lookingFor);
 		cluster.addRootActor(counterNode);
 	}
@@ -58,7 +58,11 @@ public class WordCountExmpl extends Example {
 			counterNode.sendByLocking(new ActorMessage<List<String>>(namePool.subList(i, i + range)));
 
 		// wait duringe execution
-		cluster.waitForTermination(false);
+		try {
+			cluster.waitForTermination(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		// collect result
 		CounterNode temp = counterNode;
@@ -79,5 +83,11 @@ public class WordCountExmpl extends Example {
 				result++;
 		}
 		System.out.println("serial res :" + result);
+	}
+
+	@Override
+	public void onEpochCompleted() {
+		// TODO Auto-generated method stub
+
 	}
 }

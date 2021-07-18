@@ -1,8 +1,8 @@
-package main.imagePipeline;
+package main.imagepipeline;
 
 import philosophers.arge.actor.Actor;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.configs.ActorConfig;
 
 public class Serve extends Actor<Image> {
 	private ActorConfig<Image> config;
@@ -22,8 +22,8 @@ public class Serve extends Actor<Image> {
 
 	private void deliver(Image message) {
 		delay(delay);
-		System.out.println(
-				String.format("%s - delivering image [%s]", IncrementAndGetCount(), message.getId().subSequence(0, 6)));
+//		System.out.println(
+//				String.format("%s - delivering image [%s]", IncrementAndGetCount(), message.getId().subSequence(0, 6)));
 	}
 
 	private static final int IncrementAndGetCount() {

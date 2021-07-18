@@ -1,12 +1,12 @@
-package main.imagePipeline;
+package main.imagepipeline;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import philosophers.arge.actor.Actor;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.configs.ActorConfig;
 
 /**
  * Objective : read the image from dest address that's given as message and

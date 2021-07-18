@@ -1,12 +1,12 @@
-package main.imagePipeline;
+package main.imagepipeline;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import philosophers.arge.actor.Actor;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.configs.ActorConfig;
 
 /**
  * Objective : reshape image according to the consumer types
@@ -31,6 +31,7 @@ public class Reshape extends Actor<Image> {
 
 	@Override
 	public void operate(ActorMessage<Image> msg) {
+		//System.out.println("Reshape");
 		Image img = reshapeImage(msg.getMessage());
 		FilterY rootActor = (FilterY) getRootActor(FilterY.class.getSimpleName());
 		rootActor.sendByLocking(new ActorMessage<Image>(img));

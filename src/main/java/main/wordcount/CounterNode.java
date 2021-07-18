@@ -1,4 +1,4 @@
-package main.wordCount;
+package main.wordcount;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import philosophers.arge.actor.Actor;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.configs.ActorConfig;
 
 @Getter
 @Setter
@@ -41,5 +41,5 @@ public class CounterNode extends Actor<List<String>> {
 				count++;
 		}
 	}
- 
+
 }

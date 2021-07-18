@@ -1,17 +1,21 @@
-package main.imagePipeline;
+package main.imagepipeline;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import main.Example;
+import philosophers.arge.actor.Actor;
 import philosophers.arge.actor.ActorCluster;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
 import philosophers.arge.actor.ActorPriority;
-import philosophers.arge.actor.ClusterConfig;
 import philosophers.arge.actor.ExecutorFactory.ThreadPoolTypes;
 import philosophers.arge.actor.Topic;
+import philosophers.arge.actor.configs.ActorConfig;
+import philosophers.arge.actor.configs.ClusterConfig;
 import philosophers.arge.actor.divisionstrategies.NumberBasedDivison;
 
 public class ImageProcessing extends Example {
-	private static final int LIMIT = 10;
+	private static int LIMIT = 10;
 
 	// total : 15ms per image.
 	private static final int READING_DELAY = 1; // ms
@@ -32,9 +36,8 @@ public class ImageProcessing extends Example {
 
 	@Override
 	public void runParallel() throws Exception {
-		ActorCluster cluster = new ActorCluster(new ClusterConfig(ThreadPoolTypes.FIXED_SIZED));
+		ActorCluster cluster = new ActorCluster(new ClusterConfig(ThreadPoolTypes.FIXED_SIZED, false));
 		Reader startNode = importNodes(cluster);
-
 		for (int i = 0; i < LIMIT; i++) {
 			startNode.load(new ActorMessage<String>(String.format("Path[%s]", "cd../img" + i + ".jpg")));
 		}
@@ -45,28 +48,35 @@ public class ImageProcessing extends Example {
 	}
 
 	private Reader importNodes(ActorCluster cluster) {
+		List<Actor<?>> filterYWaitList = new ArrayList<>();
 
 		Serve serveNode = new Serve(new ActorConfig<Image>(new Topic(Serve.class.getSimpleName()), cluster.getRouter(),
-				new NumberBasedDivison<Image>(1l), ActorPriority.MAX), SERVING_DELAY);
+				new NumberBasedDivison<Image>(500l), ActorPriority.MAX, null), SERVING_DELAY);
 		cluster.addRootActor(serveNode);
 
 		FilterY filterY = new FilterY(new ActorConfig<Image>(new Topic(FilterY.class.getSimpleName()),
-				cluster.getRouter(), new NumberBasedDivison<Image>(1l), ActorPriority.MEDIUM), FILTER2_DELAY);
+				cluster.getRouter(), new NumberBasedDivison<Image>(500l), ActorPriority.MEDIUM, filterYWaitList),
+				FILTER2_DELAY);
 		cluster.addRootActor(filterY);
 
 		Reshape reshape = new Reshape(new ActorConfig<Image>(new Topic(Reshape.class.getSimpleName()),
-				cluster.getRouter(), new NumberBasedDivison<Image>(1l), ActorPriority.LOW), RESHAPING_DELAY);
+				cluster.getRouter(), new NumberBasedDivison<Image>(500l), ActorPriority.LOW, null), RESHAPING_DELAY);
 		cluster.addRootActor(reshape);
 
 		FilterX filterX = new FilterX(new ActorConfig<Image>(new Topic(FilterX.class.getSimpleName()),
-				cluster.getRouter(), new NumberBasedDivison<Image>(1l), ActorPriority.VERY_LOW), FILTER_DELAY);
+				cluster.getRouter(), new NumberBasedDivison<Image>(500l), ActorPriority.VERY_LOW, null), FILTER_DELAY);
 		cluster.addRootActor(filterX);
 
 		Reader reader = new Reader(new ActorConfig<String>(new Topic(Reader.class.getSimpleName()), cluster.getRouter(),
-				new NumberBasedDivison<String>(1l), ActorPriority.DEFAULT), READING_DELAY);
+				new NumberBasedDivison<String>(500l), ActorPriority.DEFAULT, null), READING_DELAY);
 		cluster.addRootActor(reader);
 
 		return reader;
+	}
+
+	@Override
+	public void onEpochCompleted() {
+		LIMIT = LIMIT * 5;
 	}
 
 }

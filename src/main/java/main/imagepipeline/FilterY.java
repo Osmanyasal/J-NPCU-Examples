@@ -1,12 +1,12 @@
-package main.imagePipeline;
+package main.imagepipeline;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldNameConstants;
 import philosophers.arge.actor.Actor;
-import philosophers.arge.actor.ActorConfig;
 import philosophers.arge.actor.ActorMessage;
+import philosophers.arge.actor.configs.ActorConfig;
 
 /**
  * Objective : filter the image as defined and deliver to next node.
@@ -31,6 +31,7 @@ public class FilterY extends Actor<Image> {
 
 	@Override
 	public void operate(ActorMessage<Image> msg) {
+		//System.out.println("Y[filter]");
 		Image img = filterImage(msg.getMessage());
 		Serve rootActor = (Serve) getRootActor(Serve.class.getSimpleName());
 		rootActor.sendByLocking(new ActorMessage<>(img));

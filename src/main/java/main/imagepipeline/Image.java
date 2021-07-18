@@ -1,4 +1,4 @@
-package main.imagePipeline;
+package main.imagepipeline;
 
 import java.util.UUID;
 
